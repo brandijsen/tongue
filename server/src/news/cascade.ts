@@ -1,4 +1,5 @@
 import type { NewsFetchParams, NormalizedArticle } from "./types";
+import { fetchNewsdataArticles } from "./providers/newsdata";
 
 const DEFAULT_ORDER = ["newsdata", "thenewsapi", "worldnewsapi"] as const;
 
@@ -16,7 +17,8 @@ function minArticlesBeforeNext(): number {
   return Number.isFinite(n) && n > 0 ? n : 4;
 }
 
-function maxArticlesForPrompt(): number {
+/** Cap for articles passed to the LLM / stored in ASSISTANT metadata (PS2 / PF3). */
+export function maxArticlesForPrompt(): number {
   const n = Number(process.env.MAX_ARTICLES_FOR_PROMPT);
   return Number.isFinite(n) && n > 0 ? n : 8;
 }
@@ -44,13 +46,13 @@ function urlDedupKey(url: string): string {
   }
 }
 
-/** Real provider HTTP calls will plug in here (Fase 3 — next slices). */
 async function fetchFromProvider(
   providerId: string,
-  _params: NewsFetchParams,
+  params: NewsFetchParams,
 ): Promise<NormalizedArticle[]> {
   switch (providerId) {
     case "newsdata":
+      return fetchNewsdataArticles(params);
     case "thenewsapi":
     case "worldnewsapi":
       return [];

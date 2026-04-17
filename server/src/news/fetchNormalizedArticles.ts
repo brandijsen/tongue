@@ -1,3 +1,4 @@
+import { envIsTruthy } from "../lib/envTruthy";
 import { runProviderCascade } from "./cascade";
 import { getMockArticles } from "./mock";
 import type { NewsFetchParams, NormalizedArticle } from "./types";
@@ -5,8 +6,7 @@ import type { NewsFetchParams, NormalizedArticle } from "./types";
 export type { NewsFetchParams, NormalizedArticle } from "./types";
 
 export function isMockNewsEnabled(): boolean {
-  const v = process.env.USE_MOCK_NEWS?.trim().toLowerCase();
-  return v === "true" || v === "1" || v === "yes";
+  return envIsTruthy("USE_MOCK_NEWS");
 }
 
 /**

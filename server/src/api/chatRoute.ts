@@ -4,8 +4,14 @@ import { MessageRole } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { ZodError } from "zod";
 import { prisma } from "../lib/prisma";
-import { filterNormalizedArticlesForWindow } from "../news/filterByPublishWindow";
-import { fetchNormalizedArticles } from "../news/fetchNormalizedArticles";
+import {
+  buildNewsAnalystSystemPrompt,
+  completeChat,
+  loadRecentMessagesForLlm,
+  toOpenAiChatMessages,
+} from "../lib/openaiChat";
+import { stubChatReplyNoOpenAiKey, stubChatReplyOpenAiError } from "../lib/stubChatReply";
+import { resolveArticlesForChatTurn } from "../news/resolveChatArticles";
 import { parseChatRequestBody } from "./chatSchemas";
 import { serializeMessage } from "./chatSerialize";
 
@@ -74,32 +80,57 @@ chatRouter.post("/", async (req: Request, res: Response) => {
     });
     await touchConversation(conversationId);
 
-    const rawArticles = await fetchNormalizedArticles({
-      message: userText,
+    const threadAsc = await prisma.message.findMany({
+      where: { conversationId },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const { articles, newsSource, windowFallback } = await resolveArticlesForChatTurn(threadAsc, {
       date,
+      message: userText,
       sinceTime,
       timeZone,
+      refreshNews,
     });
-    const articles = filterNormalizedArticlesForWindow(rawArticles, { date, sinceTime, timeZone });
 
-    // Stub reply (OpenAI in a later slice). Articles from PS2 mock/cascade for metadata / future prompt.
-    const stubMeta = {
-      stub: true,
+    const recentForLlm = await loadRecentMessagesForLlm(conversationId);
+    const systemPrompt = buildNewsAnalystSystemPrompt(date, articles, sinceTime, timeZone);
+    const openAiMessages = toOpenAiChatMessages(systemPrompt, recentForLlm);
+
+    let reply: string;
+    let stubReply = false;
+
+    try {
+      const outcome = await completeChat(openAiMessages);
+      if (outcome.usedLlm) {
+        reply = outcome.reply;
+      } else {
+        stubReply = true;
+        reply = stubChatReplyNoOpenAiKey(date, userText);
+      }
+    } catch (e) {
+      console.error("OpenAI error:", e);
+      stubReply = true;
+      reply = stubChatReplyOpenAiError(date, userText);
+    }
+
+    const assistantMetadata = {
       date,
       ...(sinceTime != null ? { sinceTime } : {}),
       ...(timeZone != null ? { timeZone } : {}),
       ...(refreshNews === true ? { refreshNews: true } : {}),
       articles,
+      newsSource,
+      ...(windowFallback ? { windowFallback: true } : {}),
+      ...(stubReply ? { stubReply: true } : {}),
     };
-
-    const reply = `[stub] Ricevuto per il ${date}: ${userText.slice(0, 500)}${userText.length > 500 ? "…" : ""}`;
 
     await prisma.message.create({
       data: {
         conversationId,
         role: MessageRole.ASSISTANT,
         content: reply,
-        metadata: stubMeta,
+        metadata: assistantMetadata,
       },
     });
     await touchConversation(conversationId);
