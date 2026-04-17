@@ -4,6 +4,7 @@ import { MessageRole } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { ZodError } from "zod";
 import { prisma } from "../lib/prisma";
+import { filterNormalizedArticlesForWindow } from "../news/filterByPublishWindow";
 import { fetchNormalizedArticles } from "../news/fetchNormalizedArticles";
 import { parseChatRequestBody } from "./chatSchemas";
 import { serializeMessage } from "./chatSerialize";
@@ -73,12 +74,13 @@ chatRouter.post("/", async (req: Request, res: Response) => {
     });
     await touchConversation(conversationId);
 
-    const articles = await fetchNormalizedArticles({
+    const rawArticles = await fetchNormalizedArticles({
       message: userText,
       date,
       sinceTime,
       timeZone,
     });
+    const articles = filterNormalizedArticlesForWindow(rawArticles, { date, sinceTime, timeZone });
 
     // Stub reply (OpenAI in a later slice). Articles from PS2 mock/cascade for metadata / future prompt.
     const stubMeta = {

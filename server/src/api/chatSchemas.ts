@@ -1,6 +1,9 @@
 import { z } from "zod";
+import { isValidIanaTimeZone } from "../lib/ianaTimeZone";
 
 const dateYmd = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD");
+/** PS4 default max length for chat message */
+const MESSAGE_MAX_LEN = 4000;
 const timeHm = z
   .string()
   .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "sinceTime must be HH:mm (24h)");
@@ -16,7 +19,7 @@ export const chatTurnBodySchema = z
   .object({
     action: z.enum(["chat"]).optional(),
     date: dateYmd,
-    message: z.string().min(1).max(50_000),
+    message: z.string().min(1).max(MESSAGE_MAX_LEN),
     sessionId: z.string().uuid().optional(),
     sinceTime: timeHm.optional(),
     timeZone: z.string().min(1).optional(),
@@ -25,6 +28,10 @@ export const chatTurnBodySchema = z
   .strict()
   .refine((data) => data.sinceTime == null || data.timeZone != null, {
     message: "timeZone is required when sinceTime is set",
+    path: ["timeZone"],
+  })
+  .refine((data) => data.timeZone == null || isValidIanaTimeZone(data.timeZone), {
+    message: "timeZone must be a valid IANA time zone identifier (e.g. Europe/Rome)",
     path: ["timeZone"],
   });
 
