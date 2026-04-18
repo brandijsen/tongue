@@ -1,18 +1,14 @@
-/** PS2: internal shape used by cascade + LLM + ASSISTANT metadata. */
+/**
+ * PS2 — internal data model after provider normalization.
+ * Stable provider identifiers (spec PF6 / PS2).
+ */
+export type NewsProviderId = "newsdata" | "thenewsapi" | "gnews";
+
 export type NormalizedArticle = {
   title: string;
   url: string;
-  /** ISO 8601 */
-  publishedAt: string;
+  publishedAt: Date;
   excerpt: string;
   sourceName?: string;
-  /** Stable id: newsdata | thenewsapi | worldnewsapi | mock | … */
-  providerId: string;
-};
-
-export type NewsFetchParams = {
-  message: string;
-  date: string;
-  sinceTime?: string;
-  timeZone?: string;
+  providerId: NewsProviderId;
 };

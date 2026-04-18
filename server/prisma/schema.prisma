@@ -1,7 +1,5 @@
-// PS1 (traccia): PostgreSQL via Prisma — Conversation + Message for chat persistence.
-// Conversation.id is the client sessionId (UUID, server-generated on first POST); no @default on id.
-// Supabase: if `db.*.supabase.co` (direct) is unreachable (IPv4 / P1001), use only the Session pooler
-// URI as DATABASE_URL — no directUrl, so Migrate uses the same reachable connection.
+// PostgreSQL via Prisma — chat persistence.
+// Conversation.id is the client sessionId (UUID, server-generated on first POST).
 
 generator client {
   provider = "prisma-client-js"
@@ -17,22 +15,20 @@ enum MessageRole {
   ASSISTANT
 }
 
-/// One chat session; id equals sessionId (PF3).
 model Conversation {
   id        String    @id @db.Uuid
   createdAt DateTime  @default(now())
-  /// Prefer explicit touch when appending messages (Fase 3): @updatedAt alone does not run on child Message inserts.
   updatedAt DateTime  @updatedAt
   messages  Message[]
 }
 
-/// USER / ASSISTANT turns; metadata holds news bundle (date, sinceTime, timeZone, articles[]) per PF3.
 model Message {
   id             String       @id @default(uuid()) @db.Uuid
   conversationId String       @db.Uuid
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   role           MessageRole
   content        String       @db.Text
+  /// Opzionale: dati strutturati per turno assistente (es. contesto futuro).
   metadata       Json?
   createdAt      DateTime     @default(now())
 

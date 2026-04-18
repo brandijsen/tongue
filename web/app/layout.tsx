@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Tongue",
-  description: "Assistente conversazionale sulle notizie",
+  description: "Scheletro monorepo — UI in costruzione",
 };
 
 export default function RootLayout({

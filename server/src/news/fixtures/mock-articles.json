@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Mock: Technology digest for development",
+    "url": "https://example.com/mock/tech-digest",
+    "publishedAt": "2026-04-18T09:15:00.000Z",
+    "excerpt": "Local fixture for USE_MOCK_NEWS — no external API calls.",
+    "sourceName": "Mock Tech",
+    "providerId": "newsdata"
+  },
+  {
+    "title": "Mock: Climate summit recap",
+    "url": "https://example.com/mock/climate",
+    "publishedAt": "2026-04-18T16:45:00.000Z",
+    "excerpt": "Second fixture row on the same calendar day (UTC).",
+    "sourceName": "Mock World",
+    "providerId": "thenewsapi"
+  },
+  {
+    "title": "Mock: Older article (previous day)",
+    "url": "https://example.com/mock/yesterday",
+    "publishedAt": "2026-04-17T10:00:00.000Z",
+    "excerpt": "Should be filtered out when date is 2026-04-18.",
+    "sourceName": "Mock Archive",
+    "providerId": "gnews"
+  },
+  {
+    "title": "Mock: Evening brief",
+    "url": "https://example.com/mock/evening",
+    "publishedAt": "2026-04-18T22:05:00.000Z",
+    "excerpt": "Late UTC slot on the same requested day.",
+    "sourceName": "Mock Evening",
+    "providerId": "gnews"
+  }
+]
