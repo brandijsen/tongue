@@ -1,13 +1,15 @@
-// PostgreSQL via Prisma — chat persistence.
-// Conversation.id is the client sessionId (UUID, server-generated on first POST).
+// Chat persistence: one Conversation per client session, Messages in chronological order.
+// Conversation.id = client `sessionId` (UUID) generated on the first successful POST in chatRoute.
+// Message.metadata (JSON): ASSISTANT-only structured fields, e.g. `date`, `articles` (see server/src/api/assistantMessageMetadata.ts).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum MessageRole {
@@ -15,6 +17,7 @@ enum MessageRole {
   ASSISTANT
 }
 
+// Thread root; `updatedAt` bumps on new messages in chatRoute
 model Conversation {
   id        String    @id @db.Uuid
   createdAt DateTime  @default(now())
@@ -22,13 +25,14 @@ model Conversation {
   messages  Message[]
 }
 
+// One row per user or assistant turn; `@@index` supports `where conversationId` + `orderBy createdAt` (loadHistory)
 model Message {
   id             String       @id @default(uuid()) @db.Uuid
   conversationId String       @db.Uuid
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   role           MessageRole
   content        String       @db.Text
-  /// Opzionale: dati strutturati per turno assistente (es. contesto futuro).
+  /// ASSISTANT only: e.g. news bundle (`date`, `articles`, `showSources`, `summaryPending`)
   metadata       Json?
   createdAt      DateTime     @default(now())
 

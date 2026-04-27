@@ -4,6 +4,8 @@ import type { NewsProviderId, NormalizedArticle } from "./types";
 export type FetchArticlesParams = {
   message: string;
   date: string;
+  /** From chat body; when false, a future version may avoid refetching for the same day. */
+  refreshNews?: boolean;
 };
 
 export type NewsProviderErrorCode = "HTTP" | "QUOTA" | "PARSE" | "CONFIG";

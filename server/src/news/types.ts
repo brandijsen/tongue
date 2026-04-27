@@ -1,6 +1,6 @@
 /**
- * PS2 — internal data model after provider normalization.
- * Stable provider identifiers (spec PF6 / PS2).
+ * Internal data model after provider normalization.
+ * Stable provider identifiers (aligned with `NEWS_PROVIDER_ORDER` / env).
  */
 export type NewsProviderId = "newsdata" | "thenewsapi" | "gnews";
 

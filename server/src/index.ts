@@ -6,15 +6,21 @@ import { chatRouter } from "./api/chatRoute";
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 
-const corsOrigin = process.env.CORS_ORIGIN;
-app.use(
-  cors(
-    corsOrigin
-      ? { origin: corsOrigin.split(",").map((o) => o.trim()) }
-      : { origin: true },
-  ),
-);
+const isProd = process.env.NODE_ENV === "production";
+const corsFromEnv = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()).filter(Boolean) ?? [];
+const allowedOrigins =
+  corsFromEnv.length > 0
+    ? corsFromEnv
+    : isProd
+      ? []
+      : ["http://localhost:3000", "http://127.0.0.1:3000"];
+if (isProd && allowedOrigins.length === 0) {
+  console.error("CORS_ORIGIN is required in production: set one or more origins (comma-separated), no *.");
+  process.exit(1);
+}
+app.use(cors({ origin: allowedOrigins }));
 
+// Chat API: all conversation traffic is POST /api/chat (no GET for messages)
 app.use("/api/chat", chatRouter);
 
 app.get("/health", (_req, res) => {

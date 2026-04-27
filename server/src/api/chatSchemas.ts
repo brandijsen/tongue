@@ -10,12 +10,26 @@ export const loadHistoryBodySchema = z
   })
   .strict();
 
+const optionalDateYmd = z.preprocess(
+  (v) => {
+    if (v === undefined || v === null) return undefined;
+    if (typeof v === "string" && v.trim() === "") return undefined;
+    return v;
+  },
+  dateYmd.optional(),
+);
+
 export const chatTurnBodySchema = z
   .object({
     action: z.enum(["chat"]).optional(),
-    date: dateYmd,
+    /** When set, the news cascade runs for this calendar day. Omit for follow-up on the last bundle. */
+    date: optionalDateYmd,
     message: z.string().min(1).max(MESSAGE_MAX_LEN),
     sessionId: z.string().uuid().optional(),
+    /**
+     * If `true`, ask the backend for a new provider pull for the same calendar day; if omitted, first
+     * turns behave like today; `false` is accepted for a future “reuse pool” path (not fully wired yet).
+     */
     refreshNews: z.boolean().optional(),
   })
   .strict();

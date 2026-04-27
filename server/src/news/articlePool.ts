@@ -41,7 +41,7 @@ export function capArticlePool(articles: NormalizedArticle[], max: number): Norm
 
 /**
  * Append `incoming` after `base`, dedupe by URL (first wins), stop at `poolMax` items.
- * Used for the cumulative raw pool in the cascade (PS2).
+ * Used for the cumulative raw pool in the cascade.
  */
 export function mergePoolsDedupeCap(
   base: NormalizedArticle[],

@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy"
+    "db:deploy": "prisma migrate deploy",
+    "test": "tsx --test src/api/metadataContract.test.ts src/api/chatSchemas.test.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",

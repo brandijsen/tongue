@@ -21,7 +21,7 @@ function buildNumberedCorpus(articles: NormalizedArticle[]): string {
 }
 
 /**
- * PF8 — LLM picks which numbered candidates are *relevant* to the user message.
+ * LLM picks which numbered candidates are *relevant* to the user message.
  * Returns articles in **relevance order** (best first), at most `maxCount`.
  */
 export async function selectRelevantArticlesWithLLM(

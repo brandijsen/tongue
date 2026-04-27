@@ -36,7 +36,7 @@ function instantiateProvider(id: NewsProviderId, cfg: NewsEnvConfig): NewsProvid
   }
 }
 
-/** PF8 fallback when `OPENAI_API_KEY` is missing or the selector call fails. */
+/** Fallback when `OPENAI_API_KEY` is missing or the selector call fails. */
 function relevantStub(pool: NormalizedArticle[]): NormalizedArticle[] {
   return pool;
 }
@@ -73,7 +73,7 @@ async function applyRelevanceSelection(
 }
 
 /**
- * Incremental cascade (PS2 + numeric rules I / T / M). Calendar filter and pool cap applied after each fetch.
+ * Incremental cascade (multi-provider + numeric rules I / T / M). Calendar filter and pool cap applied after each fetch.
  * @throws NewsCascadeError when real fetch is requested but no API keys / mock are available
  */
 export async function runNewsCascade(
