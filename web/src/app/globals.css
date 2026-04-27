@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Ensure utilities referenced only inside string literals under src/lib/ are still scanned. */
+@source "../lib/**/*.ts";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Spark on the “T” in the wordmark (AI mark) — warm coral / salmon */
+  --tongue-ai: #ff6b5e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Expose the token to Tailwind utilities (bg-tongue-ai, text-tongue-ai, …) */
+  --color-tongue-ai: var(--tongue-ai);
+  /* ~16px body; comfortable line height for news-style reading */
+  --text-base: 1rem;
+  --line-height-base: 1.55;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  @apply font-sans text-base antialiased;
+  line-height: var(--line-height-base, 1.55);
+  text-rendering: optimizeLegibility;
+  background: var(--background);
+  color: var(--foreground);
+  font-synthesis: none;
+}
+
+/* Chat sources: staggered reveal animation */
+@keyframes assistant-source-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
