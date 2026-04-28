@@ -4,10 +4,11 @@ import express from "express";
 import { chatRouter } from "./api/chatRoute";
 
 const app = express();
-app.use(express.json({ limit: "1mb" }));
 
 const isProd = process.env.NODE_ENV === "production";
-const corsFromEnv = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()).filter(Boolean) ?? [];
+const corsFromEnv =
+  process.env.CORS_ORIGIN?.split(",").map((o) => o.trim().replace(/\/+$/, "")).filter(Boolean) ??
+  [];
 const allowedOrigins =
   corsFromEnv.length > 0
     ? corsFromEnv
@@ -19,6 +20,8 @@ if (isProd && allowedOrigins.length === 0) {
   process.exit(1);
 }
 app.use(cors({ origin: allowedOrigins }));
+
+app.use(express.json({ limit: "1mb" }));
 
 // Chat API: all conversation traffic is POST /api/chat (no GET for messages)
 app.use("/api/chat", chatRouter);
