@@ -143,5 +143,5 @@ consegna.txt
 todoList.txt
 CONTRIBUTING.md
 
-# Brand assets (local / design source; favicon copies live under web/app/)
-brand/
+# Brand/design sources solo nella root repo (NON ignorare web/public/brand per asset serviti dal front)
+/brand/
