@@ -2,6 +2,16 @@
 
 Monorepo con **API Express** (`server/`), **app Next.js** (`web/`) e persistenza **PostgreSQL** tramite **Prisma**. L’interfaccia di chat passa da **un solo** `POST /api/chat` (turni e `loadHistory` con `action: "loadHistory"` nel JSON, senza un GET separato per l’elenco messaggi). Il backend integra una **cascata** di provider notizie, un **selettore a rilevanza** (LLM) e la **sintesi** con OpenAI.
 
+## Link rapidi
+
+| Cosa | URL |
+|------|-----|
+| **Repository GitHub** | [github.com/brandijsen/tongue](https://github.com/brandijsen/tongue) |
+| **Sito in produzione (front)** | [tongue-black.vercel.app](https://tongue-black.vercel.app) |
+| **API pubblica** (base URL backend; stato: [`GET /health`](https://tongue-goxy.onrender.com/health)) | `https://tongue-goxy.onrender.com` |
+
+*Se ricrei i servizi su Vercel/Render gli URL cambiano: aggiorna questa tabella.*
+
 ## Prerequisiti
 
 - **Node.js** 20+ (consigliato) e `npm`
