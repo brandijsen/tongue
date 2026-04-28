@@ -15,6 +15,49 @@ Monorepo con **API Express** (`server/`), **app Next.js** (`web/`) e persistenza
 | `web/`     | Next.js (App Router), TypeScript, client chat |
 | `server/prisma/` | Schema e migrazioni database |
 
+### Installazione sul PC del relatore (valutatore)
+
+Chi deve **solo eseguire** il progetto sulla propria macchina dopo il clone può seguire questo ordine (Windows, macOS e Linux con shell Bash o Git Bash su Windows):
+
+1. **Ambiente**: **Node.js 20+**, **npm** e **Git**. Serve un database **PostgreSQL raggiungibile**: in alternativa locale/Docker o un progetto gratis **Supabase** ([dashboard](https://supabase.com/dashboard)) seguendo le URI descritte sotto nella sezione *Database*.
+
+2. **Clone del repository** e ingresso nella root del monorepo:
+   ```bash
+   git clone https://github.com/brandijsen/tongue.git
+   cd tongue
+   ```
+
+3. **Copia degli esempio env** (i file `.env` e `.env.local` **non** sono nel repo; si partono dai template senza segreti):
+   ```bash
+   cp server/.env.example server/.env
+   cp web/.env.example web/.env.local
+   ```
+
+4. Modifica **`server/.env`** inserendo almeno:
+   - **`DATABASE_URL`** e **`DIRECT_URL`** (vedi più sotto per Supabase o Postgres locale; in locale spesso sono **identiche**).
+   - Opzionale ma consigliato per prove complete: **`OPENAI_API_KEY`**. Senza chiave il backend resta utilizzabile con comportamenti degradati sulla sintesi.
+   - Opzionale: **`USE_MOCK_NEWS=true`** per usare articoli di prova senza registrar chiavi dei provider news.
+
+5. Dalla cartella **`server/`**:
+   ```bash
+   npm install
+   npx prisma generate
+   npx prisma migrate dev
+   npm run dev
+   ```
+   Il server espone **`GET /health`** su **http://localhost:4000** di default (`PORT` in `.env` se diversa).
+
+6. In un **secondo terminale**, dalla cartella **`web/`**:
+   ```bash
+   npm install
+   npm run dev
+   ```
+   Imposta **`web/.env.local`** con **`NEXT_PUBLIC_API_URL=http://localhost:4000`** (stessa porta dell’API, senza slash finale).
+
+7. Nel browser apri **http://localhost:3000** (il backend del passo 5 deve essere ancora attivo).
+
+Non committare mai **`.env`** né **`web/.env.local`**: contengono segreti o URL personali.
+
 ### Database (Supabase / Prisma)
 
 - **Prisma** usa PostgreSQL; lo schema vive in `server/prisma/schema.prisma` ([Database connection](https://www.prisma.io/docs/orm/reference/connection-urls)).
@@ -65,7 +108,7 @@ Modifica almeno:
 - **`server/.env` — `DATABASE_URL` e `DIRECT_URL`**: vedi sezione *Database (Supabase / Prisma)* sopra. In breve, entrambe obbligatorie; in locale possono coincidere.
 - **`web/.env.local` — `NEXT_PUBLIC_API_URL`**: base URL del backend, **senza** slash finale (es. `http://localhost:4000` se l’API gira sulla porta 4000).
 
-In sviluppo, **`CORS_ORIGIN` sul server** deve includere l’origine del front (es. `http://localhost:3000`).
+Con il front su **http://localhost:3000** il server **accetta già quell’origine** anche senza `CORS_ORIGIN`; imposta **`CORS_ORIGIN`** nel server solo se Next gira su **un’altra porta o host**.
 
 ### 3. Database e server API
 
