@@ -35,9 +35,9 @@ export const metadata: Metadata = {
     description: appDescription,
     images: [
       {
-        url: "/brand/tongue-logo-wordmark.png",
-        width: 560,
-        height: 135,
+        url: "/logo.png",
+        width: 365,
+        height: 204,
         alt: "Tongue",
       },
     ],

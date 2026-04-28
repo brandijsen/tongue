@@ -1,19 +1,20 @@
 import Image from "next/image";
 
+/** Wordmark from presentation asset (`ppt/media/image1.png` → `public/logo.png`). */
 export function SiteHeader() {
   return (
     <header
       data-site-header
       className="sticky top-0 z-30 shrink-0 border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950"
     >
-      <div className="px-4 py-2.5 sm:px-6 sm:py-3">
-        <div className="inline-block">
+      <div className="px-3 py-2.5 sm:px-4 sm:py-3">
+        <div className="inline-flex items-center">
           <Image
-            src="/brand/tongue-logo-wordmark.png"
+            src="/logo.png"
             alt="Tongue"
-            width={560}
-            height={135}
-            className="h-12 w-auto sm:h-13 md:h-14 lg:h-16"
+            width={365}
+            height={204}
+            className="h-20 w-auto sm:h-[5rem] md:h-[5.75rem] lg:h-24 xl:h-[7rem]"
             priority
           />
         </div>
