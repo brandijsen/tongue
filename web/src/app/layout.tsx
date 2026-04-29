@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { sitePublicUrl } from "@/lib/sitePublicUrl";
+import {
+  OG_LOGO_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+} from "@/lib/siteMetadata";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,34 +23,29 @@ const geistMono = Geist_Mono({
   adjustFontFallback: true,
 });
 
-const appDescription = "Notizie in sintesi, con fonti verificabili";
+const appDescription = SITE_DESCRIPTION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(sitePublicUrl()),
+  applicationName: SITE_NAME,
   title: {
-    default: "Tongue",
-    template: "%s | Tongue",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
   description: appDescription,
   openGraph: {
     type: "website",
     locale: "it_IT",
-    siteName: "Tongue",
-    title: "Tongue",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
     description: appDescription,
-    images: [
-      {
-        url: "/logo.png",
-        width: 365,
-        height: 204,
-        alt: "Tongue",
-      },
-    ],
+    images: [OG_LOGO_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tongue",
+    title: SITE_NAME,
     description: appDescription,
+    images: [OG_LOGO_IMAGE],
   },
   robots: { index: true, follow: true },
 };

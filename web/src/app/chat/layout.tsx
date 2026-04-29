@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-
-const chatDescription = "Conversazione e notizie con fonti verificabili";
+import { CHAT_DESCRIPTION, OG_LOGO_IMAGE, SITE_NAME } from "@/lib/siteMetadata";
 
 export const metadata: Metadata = {
-  title: { absolute: "Tongue" },
-  description: chatDescription,
+  title: { absolute: SITE_NAME },
+  description: CHAT_DESCRIPTION,
   openGraph: {
-    title: "Tongue",
-    description: chatDescription,
+    title: SITE_NAME,
+    description: CHAT_DESCRIPTION,
+    images: [OG_LOGO_IMAGE],
   },
   twitter: {
-    title: "Tongue",
-    description: chatDescription,
+    title: SITE_NAME,
+    description: CHAT_DESCRIPTION,
+    images: [OG_LOGO_IMAGE],
   },
 };
 
