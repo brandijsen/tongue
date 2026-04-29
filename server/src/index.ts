@@ -2,6 +2,7 @@ import "./loadEnv";
 import cors from "cors";
 import express from "express";
 import { chatRouter } from "./api/chatRoute";
+import { prisma } from "./lib/prisma";
 
 const app = express();
 
@@ -31,6 +32,17 @@ app.get("/health", (_req, res) => {
 });
 
 const port = Number(process.env.PORT) || 4000;
-app.listen(port, () => {
-  console.log(`Tongue API listening on port ${port}`);
-});
+
+void (async function start() {
+  try {
+    await prisma.$connect();
+    console.log("Prisma connected to database");
+    app.listen(port, () => {
+      console.log(`Tongue API listening on port ${port}`);
+    });
+  } catch (err) {
+    console.error("Failed to connect Prisma — not starting HTTP server", err);
+    await prisma.$disconnect().catch(() => {});
+    process.exit(1);
+  }
+})();
